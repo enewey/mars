@@ -69,6 +69,14 @@ defmodule IceBreaker.BoardTest do
     end
   end
 
+  describe "cell_at/3" do
+    test "retrieves a cell occupying the row/col", %{board: board, pr: pr, pc: pc} do
+      assert %Cell{row: 1, col: 1} = Board.cell_at(board, 1, 1)
+      assert %Cell{row: ^pr, col: ^pc, rowspan: 1, colspan: 1} = Board.cell_at(board, pr, pc)
+      assert %Cell{row: ^pr, col: ^pc, rowspan: 1, colspan: 1} = Board.cell_at(board, pr+1, pc+1)
+    end
+  end
+
   describe "poke/3" do
     test "removes cell that tests positive at the given row col", %{board: board} do
       new_board = Board.poke(board, 1,1)

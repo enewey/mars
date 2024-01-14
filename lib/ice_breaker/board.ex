@@ -40,8 +40,19 @@ defmodule IceBreaker.Board do
   Tests whether a cell exists at the specified row/col
   """
   @spec has_cell?(t(), integer(), integer()) :: boolean()
-  def has_cell?(%__MODULE__{cells: cells}, r, c) do
-    Enum.any?(cells, fn cell -> Cell.test(cell, r, c) end)
+  def has_cell?(%__MODULE__{} = board, r, c) do
+    board
+    |> cell_at(r, c)
+    |> is_nil()
+    |> Kernel.not()
+  end
+
+  @doc """
+  Retrieves the cell that occupies the given row/col
+  """
+  @spec cell_at(t(), integer(), integer()) :: Cell.t() | nil
+  def cell_at(%__MODULE__{cells: cells}, r, c) do
+    Enum.find(cells, nil, fn cell -> Cell.test(cell, r, c) end)
   end
 
   @doc """
@@ -60,6 +71,20 @@ defmodule IceBreaker.Board do
   def is_cell_stable?(%__MODULE__{cells: cells} = board, r, c) do
     cell = Enum.find(cells, fn cell -> Cell.test(cell, r, c) end)
     is_cell_stable?(board, cell)
+  end
+
+  def draw(%__MODULE__{} = board) do
+    for r <- 0..5 do
+      for c <- 0..5 do
+        case cell_at(board, r, c) do
+          %Cell{rowspan: 0, colspan: 0} -> "🟦"
+          nil -> "✖️"
+          _big_cell -> "🟧"
+        end
+      end
+      |> Enum.join()
+    end
+    |> Enum.join("\n")
   end
 
   # for cell bigger than 1x1
