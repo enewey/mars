@@ -42,11 +42,18 @@ defmodule IceBreaker do
     p_row = Enum.random(0..4)
     p_col = Enum.random(0..4)
 
-    %__MODULE__{
-      board: Board.init(p_row, p_col),
-      players: 2,
-      current_player: 0
-    }
+    new(p_row, p_col)
+  end
+
+  @doc """
+  Creates a new game with a penguin placed in a specific spot.
+  """
+  @spec new(integer(), integer()) :: t()
+  def new(p_row, p_col) do
+    board = Board.init(p_row, p_col)
+    IO.puts(Board.to_string(board))
+
+    %__MODULE__{board: board, players: 2, current_player: 0}
   end
 
   @doc """
@@ -57,7 +64,7 @@ defmodule IceBreaker do
     with {:ok, game_moved} <- move_if_valid(game, row, col),
       {:ok, game_next_turn} <- check_next_turn(game_moved) do
         IO.puts("Player #{game.current_player} moved.")
-        IO.puts(Board.draw(game_next_turn.board))
+        IO.puts(Board.to_string(game_next_turn.board))
         IO.puts("Player #{game_next_turn.current_player}'s turn!")
         game_next_turn
       else
@@ -66,11 +73,13 @@ defmodule IceBreaker do
           game_bad
         {:error, :game_over, game_over} ->
           IO.puts("OH NO! Penguin knocked down!")
-          IO.puts(Board.draw(game_over.board))
+          IO.puts(Board.to_string(game_over.board))
           IO.puts("Player #{game_over.current_player} loses! Good game!")
           game_over
       end
   end
+
+  # ----
 
   defp move_if_valid(game, row, col) do
     if valid_move?(game, row, col) do

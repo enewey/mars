@@ -73,7 +73,11 @@ defmodule IceBreaker.Board do
     is_cell_stable?(board, cell)
   end
 
-  def draw(%__MODULE__{} = board) do
+  @doc """
+  String representation of the board using unicode emojis
+  """
+  @spec to_string(t()) :: String.t()
+  def to_string(%__MODULE__{} = board) do
     for r <- 0..5 do
       for c <- 0..5 do
         case cell_at(board, r, c) do
@@ -86,6 +90,8 @@ defmodule IceBreaker.Board do
     end
     |> Enum.join("\n")
   end
+
+  # ----
 
   # for cell bigger than 1x1
   defp is_cell_stable?(%__MODULE__{} = board, %Cell{} = cell) do
